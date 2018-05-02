@@ -81,12 +81,12 @@ GLfloat vertices[] = 	{
 				
 
 				//bottom
-				-1.0f,-1.0f, 1.0f, 0.0f,1.0f,	//back top-left
-				 1.0f,-1.0f, 1.0f, 1.0f,1.0f,	//back top-right
-				 1.0f,-1.0f,-1.0f, 1.0f,0.0f,	//front top-right
-				-1.0f,-1.0f, 1.0f, 0.0f,1.0f,	//back top-left
-				 1.0f,-1.0f,-1.0f, 1.0f,0.0f,	//front top-right
-				-1.0f,-1.0f,-1.0f, 0.0f,0.0f,	//front top-left
+				-1.0f,-1.0f, 1.0f, 0.0f,1.0f,	//back bottom-left
+				 1.0f,-1.0f, 1.0f, 1.0f,1.0f,	//back bottom-right
+				 1.0f,-1.0f,-1.0f, 1.0f,0.0f,	//front bottom-right
+				-1.0f,-1.0f, 1.0f, 0.0f,1.0f,	//back bottom-left
+				 1.0f,-1.0f,-1.0f, 1.0f,0.0f,	//front bottom-right
+				-1.0f,-1.0f,-1.0f, 0.0f,0.0f,	//front bottom-left
 
 			};
 
@@ -204,11 +204,11 @@ int main()
 		glBindVertexArray(vao);
 		glBindTexture(GL_TEXTURE_2D,texId);
 		glUseProgram(program);
-		//Assign Shader Uniforms
+			//Assign Shader Uniforms
 		glUniformMatrix4fv(glGetUniformLocation(program,"model"),1,GL_FALSE,&model[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(program,"view"),1,GL_FALSE,&view[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(program,"projection"),1,GL_FALSE,&projection[0][0]);
-		glDrawArrays(GL_TRIANGLES,0,36);
+		glDrawArrays(GL_TRIANGLES,0,36);	//Draw Number of vertices at a time of loop
 		glBindVertexArray(0);
 		glEnable(GL_DEPTH_TEST);
 		glfwSwapBuffers(window);
