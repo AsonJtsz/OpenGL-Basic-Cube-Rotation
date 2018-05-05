@@ -17,7 +17,9 @@ GLFWwindow* window;
 const char* Title="OpenGL Window";
 int width= 500,height = 500;
 
+	//Mesh
 GLuint vbo,vao;
+	//Shader
 GLuint vs,fs,program;
 const char* vertexShader   = 	"#version 330 core\n"
 				"layout(location=0) in vec3 pos;\n"
@@ -90,6 +92,13 @@ GLfloat vertices[] = 	{
 
 			};
 
+	//Camera Calculation
+float yaw=0.0f,pitch=0.0f;
+float radius=10.0f;
+
+//Function Prototype
+void mouseCallback(GLFWwindow*,double,double);
+
 //Main Program
 int main()
 {
@@ -117,6 +126,9 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
+
+	//Callbacks
+	glfwSetCursorPosCallback(window,mouseCallback);
 
 	//Mesh Creation
 	glGenBuffers(1,&vbo);
@@ -185,18 +197,26 @@ int main()
 
 	//MVP matrix and ( Cube Position and Rotation ) 
 	mat4 model,view,projection;
-	view 	   = lookAt(vec3(0.0f,0.0f,0.0f),vec3(0.0f,0.0f,-1.0f),vec3(1.0f,1.0f,0.0f));
+	vec3 pos(0.0f,0.0f,0.0f),target(0.0f,0.0f,-1.0f),up(0.0f,1.0f,0.0f);
 	projection = perspective(radians(45.0f),(float)width/(float)height,0.1f,100.0f);
-	float cubeAngle = 0.0f;
 	vec3 cubePos(0.0f,0.0f,-5.0f);
+	float Yaw=0 , Pitch=0;
+
 	//Loop Events
 	while(!glfwWindowShouldClose(window))
 	{
 		//Calculation
-		cubeAngle+=1.0f;
-		if(cubeAngle>=360) cubeAngle=0;
 		model = mat4(1.0f);
-		model = translate(model,cubePos)*rotate(model,radians(cubeAngle),vec3(1.0f,0.0f,0.0f));
+		model = translate(model,cubePos);
+
+		Yaw   = radians(yaw);
+		Pitch = clamp(radians(pitch),(-pi<float>()/2.0f)+0.1f,(pi<float>()/2.0f)-0.1f);
+		radius= clamp(radius,5.0f,80.0f);
+		pos.x = target.x+radius*cosf(Pitch)*sinf(Yaw);
+		pos.y = target.y+radius*sinf(Pitch);
+		pos.z = target.z+radius*cosf(Pitch)*cosf(Yaw);
+		view  = lookAt(pos,target,up);
+		
 		//Rendering
 		glfwPollEvents();
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
@@ -229,3 +249,22 @@ int main()
 
 }//End of Main Program
 
+//Function Definition
+//Mouse Button Checker
+void mouseCallback(GLFWwindow* window,double xpos,double ypos)
+{
+	static vec2 lastMousePos(0.0f,0.0f);
+	if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_LEFT)==1)
+	{
+		yaw   -= ((float)xpos - lastMousePos.x)*0.25f;
+		pitch += ((float)ypos - lastMousePos.y)*0.25f;
+	}
+	if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT)==1)
+	{
+		float dx = ((float)xpos - lastMousePos.x)*0.01f;
+		float dy = ((float)ypos - lastMousePos.y)*0.01f;
+		radius += dx-dy;
+	}
+	lastMousePos.x = (float)xpos;
+	lastMousePos.y = (float)ypos;
+}
