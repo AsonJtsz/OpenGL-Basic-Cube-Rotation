@@ -197,11 +197,11 @@ int main()
 
 	//MVP matrix and ( Cube Position and Rotation ) 
 	mat4 model,view,projection;
-	vec3 pos(0.0f,0.0f,0.0f),target(0.0f,0.0f,-1.0f),up(0.0f,1.0f,0.0f);
+	vec3 pos(0.0f,0.0f,0.0f),target,up(0.0f,1.0f,0.0f);
 	projection = perspective(radians(45.0f),(float)width/(float)height,0.1f,100.0f);
 	vec3 cubePos(0.0f,0.0f,-5.0f);
 	float Yaw=0 , Pitch=0;
-
+	target = cubePos;
 	//Loop Events
 	while(!glfwWindowShouldClose(window))
 	{
@@ -209,13 +209,13 @@ int main()
 		model = mat4(1.0f);
 		model = translate(model,cubePos);
 
-		Yaw   = radians(yaw);
-		Pitch = clamp(radians(pitch),(-pi<float>()/2.0f)+0.1f,(pi<float>()/2.0f)-0.1f);
-		radius= clamp(radius,5.0f,80.0f);
-		pos.x = target.x+radius*cosf(Pitch)*sinf(Yaw);
-		pos.y = target.y+radius*sinf(Pitch);
-		pos.z = target.z+radius*cosf(Pitch)*cosf(Yaw);
-		view  = lookAt(pos,target,up);
+		Yaw    = radians(yaw);
+		Pitch  = clamp(radians(pitch),(-pi<float>()/2.0f)+0.1f,(pi<float>()/2.0f)-0.1f);
+		radius = clamp(radius,2.0f,80.0f);
+		pos.x  = target.x+radius*cosf(Pitch)*sinf(Yaw);
+		pos.y  = target.y+radius*sinf(Pitch);
+		pos.z  = target.z+radius*cosf(Pitch)*cosf(Yaw);
+		view   = lookAt(pos,target,up);
 		
 		//Rendering
 		glfwPollEvents();
